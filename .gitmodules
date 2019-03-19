@@ -1,0 +1,3 @@
+[submodule "FirebaseDatabaseProjectAndroid"]
+	path = FirebaseDatabaseProjectAndroid
+	url = https://github.com/VitalyKuznetsov97/FirebaseDatabaseProjectAndroid.git
