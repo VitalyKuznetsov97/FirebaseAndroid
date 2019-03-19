@@ -1,0 +1,22 @@
+function googleFormsScriptFunction(e){
+   
+  var answers = e.response.getItemResponses();
+  var mode = answers[0].getResponse();
+  var fieldName = answers[1].getResponse();
+  var fieldValue = answers[2].getResponse();
+  
+  var baseUrl = "https://fir-kotlindemo-6ab43.firebaseio.com/";
+  var secret = "W74kymZZn6sxEEnvulFz8raDiV0DOJkzXApQqHaM";
+  var database = FirebaseApp.getDatabaseByUrl(baseUrl, secret);
+  
+  if (mode == "Delete"){
+     database.removeData(fieldName, fieldValue);
+  }
+  else if (mode == "Add/Change"){
+     database.setData(fieldName, fieldValue);
+  }
+  else {
+     Logger.log("Error", mode, fieldName, fieldValue);
+  }
+  
+}
