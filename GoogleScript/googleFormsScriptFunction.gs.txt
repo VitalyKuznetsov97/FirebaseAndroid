@@ -6,14 +6,23 @@ function googleFormsScriptFunction(e){
   var fieldValue = answers[2].getResponse();
   
   var baseUrl = "https://fir-kotlindemo-6ab43.firebaseio.com/";
-  var secret = "W74kymZZn6sxEEnvulFz8raDiV0DOJkzXApQqHaM";
+  var secret = "*";
   var database = FirebaseApp.getDatabaseByUrl(baseUrl, secret);
+  var timestamp = new Date().getTime();
   
   if (mode == "Delete"){
-     database.removeData(fieldName, fieldValue);
+     database.removeData("contents/" + fieldName);
   }
   else if (mode == "Add/Change"){
-     database.setData(fieldName, fieldValue);
+    if (fieldValue == "") {
+      fieldValue = "Empty"
+    }
+    else if (/\s/.test(fieldValue)) {
+      fieldValue = fieldValue.split(' ').join('_');
+    }
+    
+    database.setData("contents/" + fieldName + "/contentValue", fieldValue);
+    database.setData("contents/" + fieldName + "/timestamp", timestamp);
   }
   else {
      Logger.log("Error", mode, fieldName, fieldValue);
