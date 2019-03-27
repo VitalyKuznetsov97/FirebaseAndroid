@@ -6,23 +6,43 @@ function googleFormsScriptFunction(e){
   var fieldValue = answers[2].getResponse();
   
   var baseUrl = "https://fir-kotlindemo-6ab43.firebaseio.com/";
-  var secret = "*";
+  var secret = "RM0mhUw75sZtOlD5aMFMM0ub6LZ44yi5bdr2b11h";
   var database = FirebaseApp.getDatabaseByUrl(baseUrl, secret);
   var timestamp = new Date().getTime();
   
-  if (mode == "Delete"){
-     database.removeData("contents/" + fieldName);
+  if (mode == "Delete" && fieldName != ""){
+         
+     var array = database.getAllData(["contents"])
+     var i;
+     for (i = fieldName; i < (array[0]).length - 1; i++) { 
+       var j = i;
+       j++;
+       database.setData("contents/" + (i.toString())[0] + "/contentValue", database.getData("contents/" + (j.toString())[0] + "/contentValue"));
+       database.setData("contents/" + (i.toString())[0] + "/timestamp", database.getData("contents/" + (j.toString())[0] + "/timestamp"));
+     }
+     database.removeData("contents/" + (((array[0]).length - 1).toString())[0]);     
   }
-  else if (mode == "Add/Change"){
-    if (fieldValue == "") {
-      fieldValue = "Empty"
-    }
-    else if (/\s/.test(fieldValue)) {
+  else if (mode == "Add" && fieldValue != ""){
+     var array = database.getAllData(["contents"])
+     fieldName = ((array[0]).length).toString();
+     if (/\s/.test(fieldValue)) {
+       fieldValue = fieldValue.split(' ').join('_');
+     }
+    
+     database.setData("contents/" + fieldName + "/contentValue", fieldValue);
+     database.setData("contents/" + fieldName + "/timestamp", timestamp);
+  }
+  else if (mode == "Change" && fieldName != "" && fieldValue != ""){
+    if (/\s/.test(fieldValue)) {
       fieldValue = fieldValue.split(' ').join('_');
     }
+    var array = database.getAllData(["contents"])
+    var fieldNameCheck = array[0].length - 1;
     
-    database.setData("contents/" + fieldName + "/contentValue", fieldValue);
-    database.setData("contents/" + fieldName + "/timestamp", timestamp);
+    if (fieldNameCheck >= parseFloat(fieldName)) {
+      database.setData("contents/" + fieldName + "/contentValue", fieldValue);
+      database.setData("contents/" + fieldName + "/timestamp", timestamp);
+    }
   }
   else {
      Logger.log("Error", mode, fieldName, fieldValue);
